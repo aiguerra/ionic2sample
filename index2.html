@@ -1,0 +1,178 @@
+<md-toolbar class="md-table-toolbar md-primary">
+
+<div class="row">
+
+<div class="col-sm-9">
+<span>Categories</span>
+</div>
+
+<div class="col-sm-1">
+<md-button ng-click="toggleLeft()" hide-gt-md="">
+        <i class="fa fa-search"></i>
+</md-button>
+</div>
+
+<div class="col-sm-1">
+<md-button>
+   <i class="fa fa-cog"></i>
+</md-button>
+</div>
+
+
+<div class="col-sm-1">
+<md-button ng-click="toggleRight()" ng-hide="isOpenRight()" >
+  <i class="fa fa-ellipsis-v"></i>
+</md-button>
+</div>
+
+
+</div>
+
+
+</md-toolbar>
+
+<md-sidenav
+     class="md-sidenav-left"
+     md-component-id="left"
+     md-is-locked-open="$mdMedia('gt-md')"
+     md-whiteframe="4">
+     <md-content layout-padding ng-controller="LeftCtrl">
+       <md-toolbar>
+       </md-toolbar>
+       <md-toolbar class="md-theme-light">
+       <h1 class="md-toolbar-tools"><i class="fa fa-search"></i>&nbsp;&nbsp;Search</h1>
+     </md-toolbar>
+     <md-list class="md-dense">
+
+    <md-list-item>
+     <md-input-container class="md-block" flex-gt-sm>
+           <label>Enter Name</label>
+           <input ng-model="searchName">
+         </md-input-container>
+    </md-list-item>
+
+    <md-list-item>
+         <md-input-container class="md-block" flex-gt-sm>
+               <label>Enter # of Forms</label>
+               <input ng-model="">
+             </md-input-container>
+    </md-list-item>
+
+      <md-list-item>
+     <md-datepicker ng-model="searchStartDate" md-placeholder="Enter Start Date"></md-datepicker>
+   </md-list-item>
+   <md-list-item>
+     <md-datepicker ng-model="searchEndDate" md-placeholder="Enter End Date"></md-datepicker>
+   </md-list-item>
+       <md-list-item>
+       <md-button ng-click="close()" class="md-primary">
+         <i class="fa fa-times-circle"></i>&nbsp;&nbsp;Close
+       </md-button>
+       </md-list-item>
+     </md-list>
+     </md-content>
+   </md-sidenav>
+
+
+<md-sidenav class="md-sidenav-right md-whiteframe-4dp" md-component-id="right">
+  <md-content ng-controller="RightCtrl" layout-padding>
+     <md-toolbar>
+     </md-toolbar>
+    <md-toolbar class="md-theme-light">
+    <h1 class="md-toolbar-tools"><i class="fa fa-ellipsis-v"></i>&nbsp;&nbsp;Menu Options</h1>
+  </md-toolbar>
+    <md-list class="md-dense">
+  <md-list-item>
+    <md-button class="md-primary" ui-sref="tenant.forms"><i class="fa fa-files-o"></i>&nbsp;&nbsp;Show All Forms</md-button>
+  </md-list-item>
+  <md-list-item>
+    <md-button class="md-primary" ng-click="createCategory($event)"><i class="fa fa-plus-square"></i>&nbsp;&nbsp;Add Category</md-button>
+  </md-list-item>
+  <md-list-item>
+    <md-button class="md-primary"
+    ng-csv="getCSVData()" csv-header="getHeader()" filename="Categories.csv">
+    <i class="fa fa-download"></i><span>&nbsp;&nbsp;Export to CSV</span>
+  </md-button>
+ </md-list-item>
+ <md-list-item>
+    <md-button class="md-primary">
+      <i class="fa fa-refresh"></i>&nbsp;&nbsp;Refresh Table
+    </md-button>
+  </md-list-item>
+  <md-list-item>
+    <md-button ng-click="close()" class="md-primary">
+    <i class="fa fa-times-circle"></i>&nbsp;&nbsp;Close
+    </md-button>
+  </md-list-item>
+  </md-list>
+  </md-content>
+</md-sidenav>
+
+<md-content>
+<md-table-container>
+        <table md-table>
+            <thead md-head>
+                <tr md-row>
+                    <th md-column>
+                    <a href='' ng-click="sortType = 'name'; sortReverse = !sortReverse">
+                      Name
+                   <span ng-show="sortType == 'name' && !sortReverse" class="fa fa-caret-down"></span>
+                   <span ng-show="sortType == 'name' && sortReverse" class="fa fa-caret-up"></span>
+                   </a>
+                    </th>
+                    <th md-column>
+                    <a href='' ng-click="sortType = 'numberOfForms'; sortReverse = !sortReverse">
+                      # of Forms
+                    <span ng-show="sortType == 'numberOfForms' && !sortReverse" class="fa fa-caret-down"></span>
+                    <span ng-show="sortType == 'numberOfForms' && sortReverse" class="fa fa-caret-up"></span>
+                    </a>
+                    </th>
+                    <th md-column>
+                      <a href='' ng-click="sortType = 'createdAt'; sortReverse = !sortReverse">
+                      Created
+                      <span ng-show="sortType == 'createdAt' && !sortReverse" class="fa fa-caret-down"></span>
+                      <span ng-show="sortType == 'createdAt' && sortReverse" class="fa fa-caret-up"></span>
+                      </a>
+                    </th>
+                    <th md-column>
+                      <a href='' ng-click="sortType = 'updatedAt'; sortReverse = !sortReverse">
+                      Last Updated
+                      <span ng-show="sortType == 'updatedAt' && !sortReverse" class="fa fa-caret-down"></span>
+                      <span ng-show="sortType == 'updatedAt' && sortReverse" class="fa fa-caret-up"></span>
+                      </a>
+                    </th>
+                    <th md-column></th>
+                </tr>
+            </thead>
+            <tbody md-body>
+
+
+               <tr ng-repeat="category in categories | orderBy:sortType:sortReverse | filter: searchName | filter: searchStartDate">
+                    <td ui-sref="tenant.form-schema-by-category({ categoryId: category.id })" md-cell>{{category.name}}</td>
+                    <td ui-sref="tenant.form-schema-by-category({ categoryId: category.id })" md-cell>{{category.numberOfForms}}</td>
+                    <td ui-sref="tenant.form-schema-by-category({ categoryId: category.id })" md-cell>{{category.createdAt | date:"d MMM yy"}}</td>
+                    <td ui-sref="tenant.form-schema-by-category({ categoryId: category.id })" md-cell>{{category.updatedAt | date:"d MMM yy"}}</td>
+                    <td md-cell ng-click="$mdOpenMenu($event)">
+                        <md-menu md-offset="0 -7">
+                            <md-button aria-label="Open demo menu" class="md-icon-button" ng-click="$mdOpenMenu($event)">
+                                ⋮
+                            </md-button>
+                            <md-menu-content width="2">
+                                <md-menu-item ng-repeat="item in menuItems">
+                                    <md-button ui-sref="{{item.link}}">
+                                        <span md-menu-align-target></span>
+                                        {{item.name}}
+                                    </md-button>
+                                </md-menu-item>
+                            </md-menu-content>
+                        </md-menu>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </md-table-container>
+
+    <md-table-pagination md-limit="10" md-limit-options="[5, 10, 15]" md-page="query.page" md-total="{{categories.length}}" md-page-select></md-table-pagination>
+
+
+</md-content>
