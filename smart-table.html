@@ -1,0 +1,164 @@
+
+<md-toolbar class="md-table-toolbar md-primary">
+
+<div class="row">
+
+<div class="col-sm-9">
+<span>Categories</span>
+</div>
+
+<div class="col-sm-1">
+<md-button ng-click="toggleLeft()" hide-gt-md="">
+        <i class="fa fa-search"></i>
+</md-button>
+</div>
+
+<div class="col-sm-1">
+<md-button>
+   <i class="fa fa-cog"></i>
+</md-button>
+</div>
+
+
+<div class="col-sm-1">
+<md-button ng-click="toggleRight()" ng-hide="isOpenRight()" >
+  <i class="fa fa-ellipsis-v"></i>
+</md-button>
+</div>
+
+
+</div>
+
+
+</md-toolbar>
+
+<md-sidenav
+     class="md-sidenav-left"
+     md-component-id="left"
+     md-is-locked-open="$mdMedia('gt-md')"
+     md-whiteframe="4">
+     <md-content layout-padding ng-controller="LeftCtrl">
+       <md-toolbar>
+       </md-toolbar>
+       <md-toolbar class="md-theme-light">
+       <h1 class="md-toolbar-tools"><i class="fa fa-search"></i>&nbsp;&nbsp;Search</h1>
+     </md-toolbar>
+     <md-list class="md-dense">
+
+    <md-list-item>
+     <md-input-container class="md-block" flex-gt-sm>
+           <label>Enter Name</label>
+           <input ng-model="searchName">
+         </md-input-container>
+    </md-list-item>
+
+    <md-list-item>
+         <md-input-container class="md-block" flex-gt-sm>
+               <label>Enter # of Forms</label>
+               <input >
+             </md-input-container>
+    </md-list-item>
+
+      <md-list-item>
+     <md-datepicker ng-model="searchStartDate" md-placeholder="Enter Start Date"></md-datepicker>
+   </md-list-item>
+   <md-list-item>
+     <md-datepicker ng-model="searchEndDate" md-placeholder="Enter End Date"></md-datepicker>
+   </md-list-item>
+       <md-list-item>
+       <md-button ng-click="close()" class="md-primary">
+         <i class="fa fa-times-circle"></i>&nbsp;&nbsp;Close
+       </md-button>
+       </md-list-item>
+     </md-list>
+     </md-content>
+   </md-sidenav>
+
+
+<md-sidenav class="md-sidenav-right md-whiteframe-4dp" md-component-id="right">
+  <md-content ng-controller="RightCtrl" layout-padding>
+     <md-toolbar>
+     </md-toolbar>
+    <md-toolbar class="md-theme-light">
+    <h1 class="md-toolbar-tools"><i class="fa fa-ellipsis-v"></i>&nbsp;&nbsp;Menu Options</h1>
+  </md-toolbar>
+    <md-list class="md-dense">
+  <md-list-item>
+    <md-button class="md-primary" ui-sref="tenant.forms"><i class="fa fa-files-o"></i>&nbsp;&nbsp;Show All Forms</md-button>
+  </md-list-item>
+  <md-list-item>
+    <md-button class="md-primary" ng-click="createCategory($event)"><i class="fa fa-plus-square"></i>&nbsp;&nbsp;Add Category</md-button>
+  </md-list-item>
+  <md-list-item>
+    <md-button class="md-primary"
+    ng-csv="getCSVData()" csv-header="getHeader()" filename="Categories.csv">
+    <i class="fa fa-download"></i><span>&nbsp;&nbsp;Export to CSV</span>
+  </md-button>
+ </md-list-item>
+ <md-list-item>
+    <md-button class="md-primary">
+      <i class="fa fa-refresh"></i>&nbsp;&nbsp;Refresh Table
+    </md-button>
+  </md-list-item>
+  <md-list-item>
+    <md-button ng-click="close()" class="md-primary">
+    <i class="fa fa-times-circle"></i>&nbsp;&nbsp;Close
+    </md-button>
+  </md-list-item>
+  </md-list>
+  </md-content>
+</md-sidenav>
+
+<md-content ng-controller="mainCtrl">
+        <table st-set-filer="customFilter" st-table="categories" class="table table-striped">
+            <thead>
+                <tr>
+                    <th st-sort="'name'">
+                      Name
+                    </th>
+                    <th st-sort="numberOfForms">
+                      # of Forms
+                    </th>
+                    <th st-sort="createdAt">
+                      Created
+                    </th>
+                    <th st-sort="updatedAt">
+                      Last Updated
+                    </th>
+                </tr>
+          <tr>
+            <th>
+              <input placeholder="Name" st-search="name" />
+            </th>
+            <th>
+              <st-number-range predicate="numberOfForms" lower="query.lower" higher="query.higher"></st-number-range>
+            </th>
+            <th>
+              <st-date-range predicate="createdAt" before="query.before" after="query.after"></st-date-range>
+            </th>
+            <th>
+              <st-date-range predicate="updatedAt" before="query.before" after="query.after"></st-date-range>
+            </th>
+        </tr>
+      </thead>
+
+
+
+
+            <tbody>
+
+
+               <tr ng-repeat="category in categories | orderBy:sortType:sortReverse | filter: searchName | filter: searchStartDate">
+                    <td ui-sref="tenant.form-schema-by-category({ categoryId: category.id })">{{category.name}}</td>
+                    <td ui-sref="tenant.form-schema-by-category({ categoryId: category.id })">{{category.numberOfForms}}</td>
+                    <td ui-sref="tenant.form-schema-by-category({ categoryId: category.id })">{{category.createdAt | date:"d MMM yy"}}</td>
+                    <td ui-sref="tenant.form-schema-by-category({ categoryId: category.id })">{{category.updatedAt | date:"d MMM yy"}}</td>
+
+                </tr>
+            </tbody>
+        </table>
+
+
+
+
+</md-content>
